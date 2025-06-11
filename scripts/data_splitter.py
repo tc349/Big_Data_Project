@@ -13,13 +13,14 @@ def main():
     os.makedirs(output_dir, exist_ok=True)
 
 
-    df = pd.read_csv(input_file)
+    df = pd.read_csv(input_file).sort_values(by='Timestamp', ascending=True)
     total_rows = len(df)
 
     
     full_end = int(total_rows * FULL_LOAD_PERCENT)
     incremental_end = full_end + int(total_rows * INCREMENTAL_LOAD_PERCENT)
 
+    
     
     df_full = df.iloc[:full_end]
     df_incremental = df.iloc[full_end:incremental_end]
