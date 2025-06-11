@@ -43,6 +43,7 @@ def full_load(engine, csv_path, table_name):
         print(f"Full load complete: table '{table_name}' replaced.")
     except Exception as e:
         print("Full load failed.")
+        print(f"Error: {e}")
         raise
 
 
