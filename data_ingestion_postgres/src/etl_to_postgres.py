@@ -58,10 +58,20 @@ def incremental_load(engine, csv_path, table_name):
         print("Incremental load failed.")
         raise
 
+def stream_tbl_postgres(engine, csv_path, table_name):
+
+    try:
+        df = pd.read_csv(csv_path)
+        print(f"Read {len(df)} rows from {csv_path}.")
+        df.to_sql(name=table_name, con=engine, if_exists='append', index=False)
+        print(f"Streaming table created: data appended to '{table_name}'.")
+    except Exception as e:
+        print("Streaming table not created.")
+        raise
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("mode", choices=["full", "inc"])
+    parser.add_argument("mode", choices=["full", "inc","stream"],)
     return parser.parse_args()
     
 
@@ -73,6 +83,7 @@ def main():
     # pick up defaults or override with env vars
     full_csv = os.getenv("FULL_LOAD_CSV", "../data/split/full_load.csv")
     inc_csv = os.getenv("INCREMENTAL_LOAD_CSV", "../data/split/inc_load.csv")
+    streaming_csv = os.getenv("KAFKA_STREAMING_CSV", "../data/split/kafka_streaming.csv")
     table = os.getenv("LOAD_TABLE", "bd_class_project")
     # inc_table = os.getenv("INCREMENTAL_LOAD_TABLE", "bd_class_project")
 
@@ -83,6 +94,8 @@ def main():
             full_load(engine, full_csv, table)
         if args.mode == "inc":
             incremental_load(engine, inc_csv, table)
+        if args.mode == "stream":
+            stream_tbl_postgres(engine, streaming_csv, "cc_fraud_strem_table")
     except Exception as e:
         print("ETL job failed.")
         sys.exit(1)
