@@ -95,7 +95,7 @@ def main():
         if args.mode == "inc":
             incremental_load(engine, inc_csv, table)
         if args.mode == "stream":
-            stream_tbl_postgres(engine, streaming_csv, "cc_fraud_strem_table")
+            stream_tbl_postgres(engine, streaming_csv, "cc_fraud_streaming_data")
     except Exception as e:
         print("ETL job failed.")
         sys.exit(1)
